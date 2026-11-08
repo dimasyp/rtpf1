@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup Solusi 1 — Feedback atas Predikat Kinerja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-dark:#13223B;
+    --navy:#1F3A5F;
+    --navy-mid:#3D5A80;
+    --gold:#C9932B;
+    --gold-light:#F4E4C1;
+    --bg:#F7F8FA;
+    --white:#FFFFFF;
+    --text:#1B2333;
+    --text-muted:#5B6473;
+    --border:#E3E6EC;
+    --green-bg:#E7F3EC; --green-text:#1E5E3A;
+    --amber-bg:#FBF1DC; --amber-text:#8A6516;
+    --gray-bg:#EEF0F3;
+    --red-bg:#FBE9E7; --red-text:#8C2E26;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
+  .app{display:flex;min-height:100vh;}
+
+  .sidebar{width:248px;background:var(--navy-dark);color:#fff;display:flex;flex-direction:column;padding:28px 20px;flex-shrink:0;}
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:44px;}
+  .brand-mark{width:40px;height:40px;border-radius:10px;background:var(--gold);color:var(--navy-dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Source Serif 4',serif;font-size:16px;flex-shrink:0;}
+  .brand-name{font-weight:600;font-size:15px;}
+  .brand-module{font-size:12px;color:#9FAAC0;margin-top:2px;}
+  .nav{display:flex;flex-direction:column;gap:4px;flex:1;}
+  .nav-item{text-align:left;background:none;border:none;color:#C7D0DE;padding:10px 12px;border-radius:8px;font-size:14px;font-family:inherit;cursor:pointer;}
+  .nav-item.active{background:rgba(255,255,255,.08);color:#fff;font-weight:500;}
+  .role-label{font-size:11px;color:#9FAAC0;margin:0 0 6px 2px;}
+  .role-switch{display:flex;gap:4px;margin-bottom:24px;background:rgba(255,255,255,.06);border-radius:8px;padding:4px;}
+  .role-btn{flex:1;background:none;border:none;color:#9FAAC0;font-size:11.5px;font-weight:600;padding:8px 2px;border-radius:6px;cursor:pointer;font-family:inherit;}
+  .role-btn.active{background:var(--gold);color:var(--navy-dark);}
+  .emp-picker{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .picker-chip{background:#fff;border:1px solid var(--border);color:var(--text-muted);font-size:13px;font-weight:500;padding:8px 16px;border-radius:20px;cursor:pointer;font-family:inherit;}
+  .picker-chip.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .empty-state{color:var(--text-muted);font-size:14px;padding:44px 0;text-align:center;border:1px dashed var(--border);border-radius:10px;}
+  .banner-done{background:var(--green-bg);color:var(--green-text);padding:12px 16px;border-radius:8px;font-size:13px;font-weight:500;margin-bottom:22px;}
+  .sidebar-footer{border-top:1px solid rgba(255,255,255,.1);padding-top:16px;}
+  .user-chip{display:flex;align-items:center;gap:10px;}
+  .user-avatar{width:32px;height:32px;border-radius:50%;background:var(--navy-mid);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
+  .user-name{font-size:13px;font-weight:500;}
+  .user-role{font-size:11px;color:#9FAAC0;}
+
+  .main{flex:1;padding:48px 56px;max-width:980px;}
+  .view{display:none;}
+  .view.active{display:block;animation:fadeIn .25s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+  .page-title{font-family:'Source Serif 4',serif;font-size:28px;font-weight:600;color:var(--text);margin:0 0 4px;}
+  .page-subtitle{font-size:14px;color:var(--text-muted);margin:0 0 32px;}
+  .illustrative-note{font-size:12px;color:var(--text-muted);margin-top:24px;font-style:italic;}
+
+  .emp-list{border-top:1px solid var(--border);}
+  .emp-row{display:flex;align-items:center;gap:16px;padding:16px 6px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+  .emp-row:hover{background:rgba(31,58,95,.035);}
+  .emp-row.static{cursor:default;}
+  .emp-row.static:hover{background:none;}
+  .emp-avatar{width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+  .emp-info{flex:1;min-width:0;}
+  .emp-name{font-size:14.5px;font-weight:600;}
+  .emp-role{font-size:12.5px;color:var(--text-muted);margin-top:1px;}
+  .emp-predikat{font-size:13px;color:var(--text-muted);width:130px;flex-shrink:0;}
+  .emp-skor{font-size:13px;font-weight:600;width:70px;text-align:center;flex-shrink:0;color:var(--navy);}
+  .status-pill{font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;width:154px;text-align:center;flex-shrink:0;}
+  .status-selesai{background:var(--green-bg);color:var(--green-text);}
+  .status-menunggu{background:var(--amber-bg);color:var(--amber-text);}
+  .status-belum{background:var(--gray-bg);color:var(--text-muted);}
+  .emp-chevron{color:var(--text-muted);font-size:18px;flex-shrink:0;width:10px;}
+  .list-head{display:flex;gap:16px;padding:0 6px 8px;font-size:11px;color:var(--text-muted);font-weight:600;}
+
+  .summary-row{display:flex;gap:12px;margin:0 0 28px;flex-wrap:wrap;}
+  .summary-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;min-width:130px;}
+  .summary-num{font-family:'Source Serif 4',serif;font-size:26px;font-weight:600;color:var(--navy);}
+  .summary-lbl{font-size:12px;color:var(--text-muted);}
+
+  .btn-back{background:none;border:none;color:var(--navy);font-size:14px;cursor:pointer;margin-bottom:24px;display:flex;align-items:center;gap:6px;font-family:inherit;padding:0;font-weight:500;}
+  .btn-back:hover{text-decoration:underline;}
+
+  .dialog-layout{display:flex;gap:40px;}
+  .dialog-form-col{flex:1.3;min-width:0;}
+  .dialog-context-col{flex:1;max-width:260px;}
+  .field-label{display:block;font-size:13px;font-weight:600;margin:22px 0 8px;}
+  .field-label:first-child{margin-top:0;}
+  .field-hint{font-size:12px;color:var(--text-muted);margin:-2px 0 8px;line-height:1.5;}
+  .field-error{font-size:13px;color:var(--red-text);margin:6px 0 0;min-height:0;}
+  .textarea{width:100%;min-height:100px;border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-family:inherit;font-size:14px;color:var(--text);resize:vertical;}
+  .textarea:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent;}
+  .upload-zone{border:1.5px dashed var(--border);border-radius:8px;padding:22px;text-align:center;cursor:pointer;color:var(--text-muted);font-size:13px;}
+  .upload-zone:hover{border-color:var(--navy-mid);}
+  .upload-icon{display:block;font-size:20px;margin-bottom:6px;color:var(--navy-mid);}
+  #photoPreview{max-width:100%;max-height:150px;border-radius:6px;display:block;margin:0 auto;}
+  .sig-wrap{border:1px solid var(--border);border-radius:8px;padding:10px;background:#fff;}
+  .sig-wrap canvas{width:100%;height:120px;display:block;cursor:crosshair;touch-action:none;}
+  .btn-text{background:none;border:none;color:var(--text-muted);font-size:12px;cursor:pointer;font-family:inherit;padding:4px 0;}
+  .btn-primary{margin-top:28px;background:var(--navy);color:#fff;border:none;padding:12px 26px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+  .btn-primary:hover{background:var(--navy-dark);}
+  .banner-wait{background:var(--amber-bg);color:var(--amber-text);padding:12px 16px;border-radius:8px;font-size:13px;font-weight:500;margin-bottom:22px;}
+  .readonly-block{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.5;}
+  .seg{display:flex;gap:8px;}
+  .seg-btn{flex:1;background:#fff;border:1px solid var(--border);color:var(--text-muted);font-size:13px;font-weight:600;padding:10px 14px;border-radius:8px;cursor:pointer;font-family:inherit;}
+  .seg-btn.on-setuju{background:var(--green-bg);color:var(--green-text);border-color:var(--green-text);}
+  .seg-btn.on-tidak{background:var(--red-bg);color:var(--red-text);border-color:var(--red-text);}
+  .agree-badge{display:inline-block;font-size:12px;font-weight:600;padding:4px 11px;border-radius:14px;}
+  .agree-setuju{background:var(--green-bg);color:var(--green-text);}
+  .agree-tidak{background:var(--red-bg);color:var(--red-text);}
+
+  .context-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px;}
+  .context-label{font-size:11px;color:var(--text-muted);margin-bottom:4px;}
+  .context-value{font-size:14px;font-weight:500;margin-bottom:16px;}
+  .context-value:last-child{margin-bottom:0;}
+
+  .loading-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:70px 0;color:var(--text-muted);gap:16px;font-size:14px;}
+  .spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .analysis-hero{display:flex;align-items:center;gap:22px;margin-bottom:28px;}
+  .analysis-score{font-family:'Source Serif 4',serif;font-size:64px;font-weight:600;color:var(--navy);line-height:1;}
+  .analysis-score-label{font-size:12.5px;color:var(--text-muted);line-height:1.7;}
+  .status-badge{display:inline-block;font-size:12.5px;font-weight:600;padding:5px 13px;border-radius:20px;}
+  .status-badge-ok{background:var(--green-bg);color:var(--green-text);}
+  .status-badge-alert{background:var(--red-bg);color:var(--red-text);}
+  .status-badge-mid{background:var(--amber-bg);color:var(--amber-text);}
+  .flags-row{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 32px;}
+  .flag-chip{font-size:12px;font-weight:500;padding:6px 13px;border-radius:16px;}
+  .flag-chip-alert{background:var(--red-bg);color:var(--red-text);}
+  .flag-chip-ok{background:var(--gray-bg);color:var(--text-muted);}
+  .flag-chip-rule{background:var(--amber-bg);color:var(--amber-text);}
+  .analysis-section{margin-bottom:24px;}
+  .analysis-section-title{font-size:13px;font-weight:600;margin-bottom:8px;}
+  .analysis-section-body{font-size:14px;line-height:1.6;}
+  .score-sub{font-size:11.5px;color:var(--text-muted);margin-top:6px;line-height:1.5;}
+  .review-banner{background:var(--amber-bg);color:var(--amber-text);border-left:3px solid #C99A2E;padding:10px 14px;border-radius:0;font-size:13px;line-height:1.5;margin:0 0 26px;}
+  .review-ok{background:var(--gray-bg);color:var(--text-muted);padding:10px 14px;border-radius:6px;font-size:13px;margin:0 0 26px;}
+  .sim-note{font-size:12px;color:var(--text-muted);font-style:italic;margin:-14px 0 22px;line-height:1.5;}
+  .dim-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .dim-table th{text-align:left;font-size:11px;color:var(--text-muted);font-weight:600;padding:0 10px 8px 0;border-bottom:1px solid var(--border);}
+  .dim-table td{padding:11px 10px 11px 0;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.45;}
+  .dim-name{font-weight:600;}
+  .dim-code{color:var(--text-muted);font-weight:500;margin-right:4px;}
+  .dim-meter{display:inline-flex;gap:3px;vertical-align:middle;margin-right:8px;}
+  .dim-meter i{width:14px;height:8px;border-radius:2px;background:var(--border);display:inline-block;}
+  .dim-meter i.on{background:var(--navy);}
+  .dim-val{font-weight:700;}
+  .dim-quote{font-style:italic;}
+  .dim-reason{color:var(--text-muted);font-size:12px;margin-top:3px;}
+  .verif{font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:10px;white-space:nowrap;display:inline-block;}
+  .verif-ok{background:var(--green-bg);color:var(--green-text);}
+  .verif-none{background:var(--gray-bg);color:var(--text-muted);}
+  .verif-bad{background:var(--red-bg);color:var(--red-text);}
+  .flag-group{margin-bottom:18px;}
+  .flag-group-title{font-size:11.5px;color:var(--text-muted);font-weight:600;margin:0 0 7px;}
+  .flag-quote{font-size:12.5px;color:var(--text-muted);margin:7px 0 0;line-height:1.5;}
+  .disclaimer{font-size:11.5px;color:var(--text-muted);line-height:1.55;margin-top:22px;padding-top:14px;border-top:1px solid var(--border);}
+  .dialog-transcript{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px;margin-top:32px;}
+  .transcript-row{margin-bottom:14px;}
+  .transcript-row:last-child{margin-bottom:0;}
+  .transcript-label{font-size:11px;color:var(--text-muted);margin-bottom:4px;}
+  .transcript-text{font-size:13.5px;line-height:1.5;}
+
+  @media (max-width:800px){
+    .app{flex-direction:column;}
+    .sidebar{width:100%;padding:16px 20px;}
+    .brand{margin-bottom:16px;}
+    .nav,.sidebar-footer{display:none;}
+    .role-switch{margin-bottom:0;}
+    .main{padding:28px 20px;}
+    .dialog-layout{flex-direction:column;}
+    .dialog-context-col{max-width:100%;}
+    .emp-predikat,.list-head{display:none;}
+    .status-pill{width:auto;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">FK</div>
+      <div>
+        <div class="brand-name">Feedback Kinerja</div>
+        <div class="brand-module">Penyampaian Predikat</div>
+      </div>
+    </div>
+    <div class="role-label">Lihat sebagai</div>
+    <div class="role-switch">
+      <button class="role-btn active" data-role="atasan">Atasan</button>
+      <button class="role-btn" data-role="karyawan">Karyawan</button>
+      <button class="role-btn" data-role="hcp">Tim HCP</button>
+    </div>
+    <nav class="nav">
+      <div id="nav-atasan"><button class="nav-item active">Feedback Bawahan</button></div>
+      <div id="nav-karyawan" style="display:none;"><button class="nav-item active">Feedback Saya</button></div>
+      <div id="nav-hcp" style="display:none;"><button class="nav-item active">Monitoring Feedback</button></div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar" id="sidebar-user-avatar">AH</div>
+        <div>
+          <div class="user-name" id="sidebar-user-name">Andi Hartono</div>
+          <div class="user-role" id="sidebar-user-role">Kepala Bidang Kepesertaan</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <section id="view-dashboard" class="view active">
+      <h1 class="page-title">Feedback atas Predikat Kinerja</h1>
+      <p class="page-subtitle">Predikat Kinerja 2025 · hasil forum kinerja · 4 bawahan</p>
+      <div class="list-head"><span style="width:40px"></span><span style="flex:1">Bawahan</span><span style="width:130px">Predikat</span><span style="width:154px;text-align:center">Status</span><span style="width:10px"></span></div>
+      <div class="emp-list" id="dashboard-rows"></div>
+      <p class="illustrative-note">Mockup — nama dan data bersifat ilustratif.</p>
+    </section>
+
+    <section id="view-dialog" class="view">
+      <button class="btn-back" data-back>← Kembali</button>
+      <h1 class="page-title" id="dialog-emp-name">—</h1>
+      <p class="page-subtitle" id="dialog-emp-role">—</p>
+      <div class="dialog-layout">
+        <div class="dialog-form-col" id="dialog-form-area"></div>
+        <div class="dialog-context-col">
+          <div class="context-card">
+            <div class="context-label">Predikat Kinerja 2025</div>
+            <div class="context-value" id="dialog-predikat">—</div>
+            <div class="context-label">Sumber predikat</div>
+            <div class="context-value">Hasil forum kinerja</div>
+            <div class="context-label">Setelah dikirim</div>
+            <div class="context-value" style="font-weight:400;font-size:13px;color:var(--text-muted);">Bawahan menanggapi dan menulis komitmen. Pesan dan tanggapan kemudian dianalisis AI sebagai bahan skrining bagi tim HCP.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-hcp" class="view">
+      <h1 class="page-title">Monitoring Feedback</h1>
+      <p class="page-subtitle">Predikat Kinerja 2025 · Bidang Kepesertaan</p>
+      <div class="summary-row" id="hcp-summary"></div>
+      <div class="list-head"><span style="width:40px"></span><span style="flex:1">Karyawan</span><span style="width:130px">Predikat</span><span style="width:70px;text-align:center">Skor AI</span><span style="width:154px;text-align:center">Status</span><span style="width:10px"></span></div>
+      <div class="emp-list" id="hcp-rows"></div>
+      <p class="illustrative-note">Hasil analisis AI saat ini hanya dapat dilihat tim HCP. Mockup — nama dan data bersifat ilustratif.</p>
+    </section>
+
+    <section id="view-analysis" class="view">
+      <button class="btn-back" data-back>← Kembali ke Monitoring</button>
+      <h1 class="page-title" id="analysis-emp-name">—</h1>
+      <p class="page-subtitle" id="analysis-emp-role">—</p>
+      <div id="analysis-body"></div>
+      <div class="dialog-transcript">
+        <div class="transcript-row">
+          <div class="transcript-label">Pesan atasan</div>
+          <div class="transcript-text" id="analysis-pesan">—</div>
+        </div>
+        <div class="transcript-row">
+          <div class="transcript-label">Persetujuan bawahan</div>
+          <div class="transcript-text" id="analysis-setuju">—</div>
+        </div>
+        <div class="transcript-row">
+          <div class="transcript-label">Komitmen bawahan</div>
+          <div class="transcript-text" id="analysis-komitmen">—</div>
+        </div>
+      </div>
+      <p class="disclaimer">Flag indikatif dihasilkan AI hanya dari teks tertulis yang singkat, sehingga dapat tidak akurat dan belum tentu mewakili kondisi yang sebenarnya. Hasil ini adalah alat skrining, bukan kesimpulan: wajib dikonfirmasi melalui dialog langsung dan tidak boleh menjadi dasar keputusan kepegawaian. Ambang skor bersifat sementara sampai divalidasi terhadap penilai manusia.</p>
+    </section>
+
+    <section id="view-karyawan" class="view">
+      <h1 class="page-title">Feedback Saya</h1>
+      <p class="page-subtitle">Penjelasan atasan atas Predikat Kinerja 2025</p>
+      <div class="emp-picker" id="emp-picker"></div>
+      <div id="karyawan-content"></div>
+      <p class="illustrative-note">Tampilan ini mensimulasikan sudut pandang karyawan yang login sebagai dirinya sendiri — pilih nama di atas untuk mendemokan status yang berbeda.</p>
+    </section>
+
+  </main>
+</div>
+
+<script>
+const ATASAN = 'Andi Hartono';
+const employees = [
+  { id:1, name:'Bayu Saputra', jabatan:'Account Representative 3', predikat:'Memuaskan', status:'belum', pesanAtasan:'', setuju:null, komitmen:'', ai:null },
+  { id:2, name:'Dewi Anggraini', jabatan:'Account Representative 2', predikat:'Baik', status:'menunggu',
+    pesanAtasan:'Dewi, predikat Baik untuk 2025 karena capaian akuisisi peserta baru sudah memenuhi target, tetapi rasio peserta aktif masih di bawah target unit. Di 2026, mari fokus ke tindak lanjut peserta yang menunggak agar rasio aktif ikut naik.',
+    setuju:null, komitmen:'', ai:null },
+  { id:3, name:'Rizki Pratama', jabatan:'Account Representative 4', predikat:'Sangat Memuaskan', status:'selesai',
+    pesanAtasan:'Rizki, predikat Sangat Memuaskan untuk 2025 mencerminkan capaian akuisisi kepesertaan mandiri yang konsisten di atas target sepanjang tahun. Untuk 2026, saya ingin kamu mulai membantu mentoring rekan baru di tim.',
+    setuju:true,
+    komitmen:'Terima kasih atas apresiasinya, Pak. Saya akan mulai mendampingi rekan baru mulai bulan depan dan tetap menjaga capaian akuisisi.',
+    ai:{ dim:{
+        D1:{ nilai:2, kutipan:'Terima kasih atas apresiasinya, Pak.', alasan:'Menerima feedback tanpa elaborasi (level 2).' },
+        D2:{ nilai:3, kutipan:'Saya akan mulai mendampingi rekan baru', alasan:'Menjawab poin utama feedback, yaitu mentoring rekan baru (level 3).' },
+        D3:{ nilai:3, kutipan:'mulai mendampingi rekan baru mulai bulan depan', alasan:'Tindakan konkret dengan waktu yang jelas (level 3).' },
+        D4:{ nilai:3, kutipan:'Terima kasih atas apresiasinya, Pak.', alasan:'Nada positif dan konstruktif (level 3).' } },
+      flagIndikatif:[],
+      ringkasan:'Karyawan berterima kasih atas apresiasi atasan. Karyawan menyatakan akan mulai mendampingi rekan baru bulan depan dan tetap menjaga capaian akuisisi.' } },
+  { id:4, name:'Siti Rahayu', jabatan:'Account Representative 1', predikat:'Kurang', status:'selesai',
+    pesanAtasan:'Siti, predikat Kurang untuk 2025 karena capaian kamu masih di bawah target di sebagian besar periode. Saya ingin kita diskusikan kendala di lapangan dan langkah apa yang bisa diambil di 2026.',
+    setuju:false,
+    komitmen:'Baik pak, tapi sebenarnya target yang diberikan menurut saya kurang realistis dibanding wilayah kerja saya.',
+    ai:{ dim:{
+        D1:{ nilai:1, kutipan:'Baik pak, tapi sebenarnya target yang diberikan menurut saya kurang realistis', alasan:'Menerima, tetapi disertai keberatan (level 1).' },
+        D2:{ nilai:1, kutipan:'target yang diberikan menurut saya kurang realistis', alasan:'Terkait topik capaian secara umum, tetapi tidak menjawab ajakan membahas kendala dan tindak lanjut (level 1).' },
+        D3:{ nilai:0, kutipan:'', alasan:'Tidak ada komitmen tindakan (level 0).' },
+        D4:{ nilai:1, kutipan:'tapi sebenarnya target yang diberikan menurut saya kurang realistis', alasan:'Nada cenderung defensif (level 1).' } },
+      flagIndikatif:[{ kode:'gap_persepsi', kutipan:'target yang diberikan menurut saya kurang realistis' }],
+      ringkasan:'Karyawan menilai target yang diberikan kurang realistis dibanding wilayah kerjanya. Tanggapan tidak memuat kendala spesifik maupun rencana tindak lanjut.' } },
+];
+
+let currentRole = 'atasan';
+let currentKaryawanId = 2;
+
+function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase(); }
+function statusLabel(s){ return s==='selesai' ? 'Selesai' : s==='menunggu' ? 'Menunggu Bawahan' : 'Belum'; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function agreeBadge(v){ return v ? '<span class="agree-badge agree-setuju">Setuju</span>' : '<span class="agree-badge agree-tidak">Tidak Setuju</span>'; }
+
+function renderDashboard(){
+  const wrap = document.getElementById('dashboard-rows');
+  wrap.innerHTML = '';
+  employees.forEach(emp=>{
+    const row = document.createElement('div');
+    row.className = 'emp-row';
+    row.innerHTML = `
+      <div class="emp-avatar">${initials(emp.name)}</div>
+      <div class="emp-info"><div class="emp-name">${emp.name}</div><div class="emp-role">${emp.jabatan}</div></div>
+      <div class="emp-predikat">${emp.predikat}</div>
+      <div class="status-pill status-${emp.status}">${statusLabel(emp.status)}</div>
+      <div class="emp-chevron">›</div>`;
+    row.addEventListener('click', ()=>{ renderDialog(emp); showView('dialog'); });
+    wrap.appendChild(row);
+  });
+}
+
+function renderDialog(emp){
+  document.getElementById('dialog-emp-name').textContent = emp.name;
+  document.getElementById('dialog-emp-role').textContent = emp.jabatan;
+  document.getElementById('dialog-predikat').textContent = emp.predikat;
+  const formArea = document.getElementById('dialog-form-area');
+
+  if(emp.status==='belum'){
+    formArea.innerHTML = `
+      <label class="field-label">Penjelasan predikat untuk ${emp.name}</label>
+      <p class="field-hint">Catat ringkasan dialog langsung Anda dengan bawahan: dasar predikat, hal yang sudah baik, dan yang perlu ditingkatkan.</p>
+      <textarea id="msgInput" class="textarea" placeholder="Tuliskan feedback kinerja Anda di sini..."></textarea>
+      <p class="field-error" id="msgError"></p>
+      <label class="field-label">Foto sesi dialog</label>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="photoInput" accept="image/*" capture="environment" hidden>
+        <div id="uploadPrompt"><span class="upload-icon">＋</span><span>Ambil atau pilih foto</span></div>
+        <img id="photoPreview" style="display:none;" alt="Pratinjau foto sesi dialog">
+      </div>
+      <label class="field-label">Tanda tangan digital atasan</label>
+      <div class="sig-wrap">
+        <canvas id="sigPad" width="400" height="120"></canvas>
+        <button type="button" class="btn-text" id="clearSig">Hapus tanda tangan</button>
+      </div>
+      <button class="btn-primary" id="submitFeedback">Kirim Feedback</button>`;
+    setupUpload();
+    setupSignature('sigPad','clearSig');
+    document.getElementById('msgInput').addEventListener('input', ()=>{ document.getElementById('msgError').textContent=''; });
+    document.getElementById('submitFeedback').addEventListener('click', ()=>submitFeedback(emp));
+  } else if(emp.status==='menunggu'){
+    formArea.innerHTML = `
+      <div class="banner-wait">Menunggu tanggapan dan komitmen dari ${emp.name}</div>
+      <label class="field-label">Feedback yang telah dikirim</label>
+      <div class="readonly-block">${esc(emp.pesanAtasan)}</div>`;
+  } else {
+    formArea.innerHTML = `
+      <div class="banner-done">Selesai — bawahan sudah menanggapi</div>
+      <label class="field-label">Feedback Anda</label>
+      <div class="readonly-block">${esc(emp.pesanAtasan)}</div>
+      <label class="field-label">Tanggapan bawahan</label>
+      <div>${agreeBadge(emp.setuju)}</div>
+      <label class="field-label">Komitmen bawahan</label>
+      <div class="readonly-block">${esc(emp.komitmen)}</div>`;
+  }
+}
+
+function setupUpload(){
+  const zone = document.getElementById('uploadZone');
+  const input = document.getElementById('photoInput');
+  zone.addEventListener('click', ()=>input.click());
+  input.addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev)=>{
+      document.getElementById('uploadPrompt').style.display = 'none';
+      const img = document.getElementById('photoPreview');
+      img.src = ev.target.result;
+      img.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function setupSignature(canvasId, clearBtnId){
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#1B2333'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+  let drawing = false;
+  function pos(e){
+    const rect = canvas.getBoundingClientRect();
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x:(cx-rect.left)*canvas.width/rect.width, y:(cy-rect.top)*canvas.height/rect.height };
+  }
+  function start(e){ drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); }
+  function move(e){ if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault(); }
+  function end(){ drawing=false; }
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, {passive:true});
+  canvas.addEventListener('touchmove', move, {passive:false});
+  canvas.addEventListener('touchend', end);
+  document.getElementById(clearBtnId).addEventListener('click', ()=>ctx.clearRect(0,0,canvas.width,canvas.height));
+}
+
+function submitFeedback(emp){
+  const msg = document.getElementById('msgInput').value.trim();
+  if(!msg){ document.getElementById('msgError').textContent = 'Tuliskan feedback terlebih dahulu.'; return; }
+  emp.pesanAtasan = msg;
+  document.getElementById('dialog-form-area').innerHTML =
+    `<div class="loading-state"><div class="spinner"></div><div>Mengirim feedback…</div></div>`;
+  setTimeout(()=>{ emp.status = 'menunggu'; renderDashboard(); showView('dashboard'); }, 900);
+}
+
+function switchRole(role){
+  currentRole = role;
+  document.querySelectorAll('.role-btn').forEach(b=>b.classList.toggle('active', b.dataset.role===role));
+  ['atasan','karyawan','hcp'].forEach(r=>{ document.getElementById('nav-'+r).style.display = r===role ? '' : 'none'; });
+  if(role==='atasan'){
+    setSidebarUser('AH', ATASAN, 'Kepala Bidang Kepesertaan');
+    renderDashboard(); showView('dashboard');
+  } else if(role==='karyawan'){
+    updateKaryawanSidebarUser(); renderKaryawanPicker(); renderKaryawanContent(); showView('karyawan');
+  } else {
+    setSidebarUser('HC', 'Tim HCP', 'Human Capital Planning');
+    renderHcp(); showView('hcp');
+  }
+}
+function setSidebarUser(av, name, role){
+  document.getElementById('sidebar-user-avatar').textContent = av;
+  document.getElementById('sidebar-user-name').textContent = name;
+  document.getElementById('sidebar-user-role').textContent = role;
+}
+function updateKaryawanSidebarUser(){
+  const emp = employees.find(e=>e.id===currentKaryawanId);
+  setSidebarUser(initials(emp.name), emp.name, emp.jabatan);
+}
+
+function renderKaryawanPicker(){
+  const wrap = document.getElementById('emp-picker');
+  wrap.innerHTML = '';
+  employees.forEach(emp=>{
+    const btn = document.createElement('button');
+    btn.className = 'picker-chip' + (emp.id===currentKaryawanId ? ' active' : '');
+    btn.textContent = emp.name;
+    btn.addEventListener('click', ()=>{ currentKaryawanId = emp.id; updateKaryawanSidebarUser(); renderKaryawanPicker(); renderKaryawanContent(); });
+    wrap.appendChild(btn);
+  });
+}
+
+function renderKaryawanContent(){
+  const emp = employees.find(e=>e.id===currentKaryawanId);
+  const wrap = document.getElementById('karyawan-content');
+  if(emp.status==='belum'){
+    wrap.innerHTML = `<div class="empty-state">Atasan Anda belum memberikan feedback atas predikat kinerja 2025.</div>`;
+  } else if(emp.status==='menunggu'){
+    wrap.innerHTML = `
+      <div class="context-card" style="margin-bottom:22px;max-width:320px;">
+        <div class="context-label">Predikat Kinerja 2025 Anda</div>
+        <div class="context-value">${emp.predikat}</div>
+      </div>
+      <label class="field-label">Feedback dari atasan (${ATASAN})</label>
+      <div class="readonly-block">${esc(emp.pesanAtasan)}</div>
+      <label class="field-label">Apakah Anda setuju dengan feedback atasan?</label>
+      <div class="seg">
+        <button type="button" class="seg-btn" data-val="1">Setuju</button>
+        <button type="button" class="seg-btn" data-val="0">Tidak Setuju</button>
+      </div>
+      <p class="field-error" id="agreeError"></p>
+      <label class="field-label">Tanggapan dan komitmen Anda</label>
+      <p class="field-hint">Wajib diisi, baik setuju maupun tidak setuju.</p>
+      <textarea id="komitmenInput" class="textarea" placeholder="Tuliskan tanggapan dan komitmen Anda di sini..."></textarea>
+      <p class="field-error" id="komitmenError"></p>
+      <label class="field-label">Tanda tangan digital</label>
+      <div class="sig-wrap">
+        <canvas id="sigPadKaryawan" width="400" height="120"></canvas>
+        <button type="button" class="btn-text" id="clearSigKaryawan">Hapus tanda tangan</button>
+      </div>
+      <button class="btn-primary" id="submitKomitmen">Kirim Tanggapan</button>`;
+    let pilihan = null;
+    wrap.querySelectorAll('.seg-btn').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        pilihan = b.dataset.val==='1';
+        wrap.querySelectorAll('.seg-btn').forEach(x=>x.classList.remove('on-setuju','on-tidak'));
+        b.classList.add(pilihan ? 'on-setuju' : 'on-tidak');
+        document.getElementById('agreeError').textContent = '';
+      });
+    });
+    document.getElementById('komitmenInput').addEventListener('input', ()=>{ document.getElementById('komitmenError').textContent=''; });
+    setupSignature('sigPadKaryawan','clearSigKaryawan');
+    document.getElementById('submitKomitmen').addEventListener('click', ()=>submitKomitmen(emp, pilihan));
+  } else {
+    wrap.innerHTML = `
+      <div class="banner-done">Tanggapan Anda telah dikirim</div>
+      <label class="field-label">Feedback dari atasan</label>
+      <div class="readonly-block">${esc(emp.pesanAtasan)}</div>
+      <label class="field-label">Tanggapan Anda</label>
+      <div>${agreeBadge(emp.setuju)}</div>
+      <label class="field-label">Komitmen Anda</label>
+      <div class="readonly-block">${esc(emp.komitmen)}</div>`;
+  }
+}
+
+function submitKomitmen(emp, pilihan){
+  const val = document.getElementById('komitmenInput').value.trim();
+  let ok = true;
+  if(pilihan===null){ document.getElementById('agreeError').textContent = 'Pilih Setuju atau Tidak Setuju.'; ok = false; }
+  if(!val){ document.getElementById('komitmenError').textContent = 'Tuliskan tanggapan dan komitmen Anda.'; ok = false; }
+  if(!ok) return;
+  emp.komitmen = val; emp.setuju = pilihan;
+  document.getElementById('karyawan-content').innerHTML =
+    `<div class="loading-state"><div class="spinner"></div><div>Mengirim tanggapan…</div></div>`;
+  setTimeout(()=>{ emp.status = 'selesai'; emp.ai = aiSimulasi(val); renderKaryawanContent(); }, 1100);
+}
+
+function renderHcp(){
+  const n = employees.length;
+  const selesai = employees.filter(e=>e.status==='selesai');
+  const review = selesai.filter(e=>aiHitung(e).alasan.length).length;
+  const belum = employees.filter(e=>e.status==='belum').length;
+  document.getElementById('hcp-summary').innerHTML = `
+    <div class="summary-card"><div class="summary-num">${selesai.length}/${n}</div><div class="summary-lbl">Feedback selesai</div></div>
+    <div class="summary-card"><div class="summary-num">${belum}</div><div class="summary-lbl">Belum diberi feedback</div></div>
+    <div class="summary-card"><div class="summary-num">${review}</div><div class="summary-lbl">Perlu review manual</div></div>`;
+  const wrap = document.getElementById('hcp-rows');
+  wrap.innerHTML = '';
+  employees.forEach(emp=>{
+    const done = emp.status==='selesai';
+    const skor = done ? aiHitung(emp).skor : '—';
+    const row = document.createElement('div');
+    row.className = 'emp-row' + (done ? '' : ' static');
+    row.innerHTML = `
+      <div class="emp-avatar">${initials(emp.name)}</div>
+      <div class="emp-info"><div class="emp-name">${emp.name}</div><div class="emp-role">Atasan: ${ATASAN}</div></div>
+      <div class="emp-predikat">${emp.predikat}</div>
+      <div class="emp-skor">${skor}</div>
+      <div class="status-pill status-${emp.status}">${statusLabel(emp.status)}</div>
+      <div class="emp-chevron">${done ? '›' : ''}</div>`;
+    if(done) row.addEventListener('click', ()=>{ renderAnalysis(emp); showView('analysis'); });
+    wrap.appendChild(row);
+  });
+}
+
+document.querySelectorAll('.role-btn').forEach(b=>{ b.addEventListener('click', ()=>switchRole(b.dataset.role)); });
+
+const AI_DIM = { D1:'Penerimaan substansi feedback', D2:'Relevansi komitmen', D3:'Spesifisitas komitmen', D4:'Nada tanggapan' };
+const AI_FLAG = { indikasi_tekanan:'Indikasi tekanan', respon_defensif:'Respons defensif', potensi_konflik:'Potensi konflik', gap_persepsi:'Gap persepsi' };
+const AI_FLAG_ATURAN = { komitmen_terlalu_singkat:'Komitmen terlalu singkat', komitmen_tidak_relevan:'Komitmen tidak relevan' };
+const SKOR_CONFIG = { NILAI_MAKS:3, AMBANG_SELARAS:75, AMBANG_SEBAGIAN:50, MIN_KATA_KOMITMEN:10 };
+function aiNorm(s){ return (s||'').toLowerCase().replace(/\s+/g,' ').trim(); }
+function aiVerif(kutipan, sumber){ if(!kutipan) return 'KOSONG'; return aiNorm(sumber).includes(aiNorm(kutipan)) ? 'TERVERIFIKASI' : 'TIDAK_DITEMUKAN'; }
+function aiHitung(emp){
+  const m = emp.ai, kodes = Object.keys(AI_DIM);
+  const sumber = { D1:emp.komitmen, D2:emp.komitmen+' '+emp.pesanAtasan, D3:emp.komitmen, D4:emp.komitmen };
+  let total = 0; const verif = {};
+  kodes.forEach(k=>{ total += m.dim[k].nilai; verif[k] = aiVerif(m.dim[k].kutipan, sumber[k]); });
+  const skor = Math.round(total/(kodes.length*SKOR_CONFIG.NILAI_MAKS)*100);
+  const status = skor>=SKOR_CONFIG.AMBANG_SELARAS ? 'Selaras' : skor>=SKOR_CONFIG.AMBANG_SEBAGIAN ? 'Sebagian Selaras' : 'Tidak Selaras';
+  const kata = emp.komitmen.split(/\s+/).filter(Boolean).length;
+  const flagAturan = [];
+  if(kata < SKOR_CONFIG.MIN_KATA_KOMITMEN) flagAturan.push('komitmen_terlalu_singkat');
+  if(m.dim.D2.nilai===0) flagAturan.push('komitmen_tidak_relevan');
+  const fi = m.flagIndikatif.map(f=>({ kode:f.kode, kutipan:f.kutipan, verif:aiVerif(f.kutipan, emp.komitmen+' '+emp.pesanAtasan) }));
+  const alasan = [];
+  if(status==='Tidak Selaras') alasan.push('status Tidak Selaras');
+  if(emp.setuju===false) alasan.push('bawahan tidak setuju');
+  kodes.forEach(k=>{ if(m.dim[k].nilai===0) alasan.push(k+' bernilai 0'); });
+  kodes.forEach(k=>{ if(verif[k]==='TIDAK_DITEMUKAN') alasan.push('kutipan '+k+' tidak ditemukan di teks asli'); });
+  if(fi.length) alasan.push('ada flag indikatif AI');
+  return { skor, status, verif, flagAturan, flagIndikatif:fi, alasan };
+}
+function aiSimulasi(val){
+  const kata = val.split(/\s+/).filter(Boolean), potong = kata.slice(0,8).join(' ');
+  const panjang = kata.length >= SKOR_CONFIG.MIN_KATA_KOMITMEN;
+  return { simulasi:true, flagIndikatif:[],
+    ringkasan:'Pada sistem sebenarnya, dua kalimat ringkasan objektif dari model tentang isi tanggapan tampil di sini.',
+    dim: panjang ? {
+      D1:{ nilai:2, kutipan:potong, alasan:'Menerima feedback tanpa elaborasi (level 2).' },
+      D2:{ nilai:2, kutipan:potong, alasan:'Menjawab sebagian poin feedback (level 2).' },
+      D3:{ nilai:1, kutipan:potong, alasan:'Komitmen umum tanpa ukuran atau waktu (level 1).' },
+      D4:{ nilai:2, kutipan:potong, alasan:'Nada netral (level 2).' } }
+    : {
+      D1:{ nilai:1, kutipan:potong, alasan:'Menerima, tetapi sangat singkat (level 1).' },
+      D2:{ nilai:1, kutipan:potong, alasan:'Terkait secara umum saja (level 1).' },
+      D3:{ nilai:0, kutipan:'', alasan:'Tidak ada komitmen tindakan (level 0).' },
+      D4:{ nilai:2, kutipan:potong, alasan:'Nada netral (level 2).' } } };
+}
+function renderAiBody(emp){
+  const m = emp.ai, h = aiHitung(emp);
+  const badge = h.status==='Selaras' ? 'status-badge-ok' : h.status==='Sebagian Selaras' ? 'status-badge-mid' : 'status-badge-alert';
+  let out = `<div class="analysis-hero"><div class="analysis-score">${h.skor}</div>
+    <div class="analysis-score-label">Skor Keselarasan<br><span class="status-badge ${badge}">${h.status}</span>
+    <div class="score-sub">Dihitung kode dari 4 dimensi (0–3) dengan rumus tetap.<br>Ambang sementara: ≥ 75 Selaras · 50–74 Sebagian Selaras · &lt; 50 Tidak Selaras</div></div></div>`;
+  out += h.alasan.length
+    ? `<div class="review-banner"><b>Perlu review manual</b> — ${esc(h.alasan.join('; '))}.</div>`
+    : `<div class="review-ok">Tidak ada penanda review manual.</div>`;
+  if(m.simulasi) out += `<p class="sim-note">Simulasi: nilai dimensi pada demo ini adalah contoh, bukan keluaran model. Skor, status, flag aturan, dan verifikasi kutipan dihitung langsung dari teks yang diketik.</p>`;
+  out += `<div class="analysis-section"><div class="analysis-section-title">Penilaian per dimensi</div>
+    <table class="dim-table"><thead><tr><th style="width:23%">Dimensi</th><th style="width:13%">Nilai</th><th>Kutipan bukti dan alasan</th><th style="width:1%">Verifikasi</th></tr></thead><tbody>`;
+  Object.keys(AI_DIM).forEach(k=>{
+    const d = m.dim[k], v = h.verif[k];
+    const vcls = v==='TERVERIFIKASI' ? 'verif-ok' : v==='KOSONG' ? 'verif-none' : 'verif-bad';
+    const vtxt = v==='TERVERIFIKASI' ? 'Terverifikasi' : v==='KOSONG' ? 'Kosong' : 'Tidak ditemukan';
+    const meter = [1,2,3].map(i=>`<i class="${i<=d.nilai?'on':''}"></i>`).join('');
+    out += `<tr><td><span class="dim-code">${k}</span><span class="dim-name">${AI_DIM[k]}</span></td>
+      <td><span class="dim-meter">${meter}</span><span class="dim-val">${d.nilai}/3</span></td>
+      <td>${d.kutipan ? `<div class="dim-quote">“${esc(d.kutipan)}”</div>` : `<div class="dim-quote" style="color:var(--text-muted);font-style:normal;">(tidak ada kutipan)</div>`}<div class="dim-reason">${esc(d.alasan)}</div></td>
+      <td><span class="verif ${vcls}">${vtxt}</span></td></tr>`;
+  });
+  out += `</tbody></table></div>`;
+  out += `<div class="analysis-section"><div class="flag-group"><div class="flag-group-title">Flag berbasis aturan (dihitung kode)</div><div class="flags-row" style="margin:0;">` +
+    (h.flagAturan.length ? h.flagAturan.map(f=>`<span class="flag-chip flag-chip-rule">${AI_FLAG_ATURAN[f]}</span>`).join('') : `<span class="flag-chip flag-chip-ok">Tidak ada</span>`) +
+    `</div></div><div class="flag-group" style="margin-bottom:0;"><div class="flag-group-title">Flag indikatif AI (perlu konfirmasi, bukan kesimpulan)</div><div class="flags-row" style="margin:0;">` +
+    (h.flagIndikatif.length ? h.flagIndikatif.map(f=>`<span class="flag-chip flag-chip-alert">${AI_FLAG[f.kode]}</span>`).join('') : `<span class="flag-chip flag-chip-ok">Tidak ada</span>`) + `</div>` +
+    h.flagIndikatif.map(f=>`<div class="flag-quote">${AI_FLAG[f.kode]}: <i>“${esc(f.kutipan)}”</i></div>`).join('') + `</div></div>`;
+  out += `<div class="analysis-section"><div class="analysis-section-title">Ringkasan AI</div><div class="analysis-section-body">${esc(m.ringkasan)}</div></div>`;
+  document.getElementById('analysis-body').innerHTML = out;
+}
+function renderAnalysis(emp){
+  document.getElementById('analysis-emp-name').textContent = emp.name;
+  document.getElementById('analysis-emp-role').textContent = emp.jabatan + ' · Predikat ' + emp.predikat;
+  renderAiBody(emp);
+  document.getElementById('analysis-pesan').textContent = emp.pesanAtasan;
+  document.getElementById('analysis-setuju').innerHTML = agreeBadge(emp.setuju);
+  document.getElementById('analysis-komitmen').textContent = emp.komitmen;
+}
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('[data-back]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    if(currentRole==='hcp'){ renderHcp(); showView('hcp'); }
+    else { renderDashboard(); showView('dashboard'); }
+  });
+});
+
+renderDashboard();
+</script>
+</body>
+</html>
